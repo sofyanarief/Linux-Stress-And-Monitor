@@ -1,3 +1,4 @@
+import socket
 from datetime import datetime
 import threading
 import time
@@ -16,6 +17,8 @@ class SysMonThread(threading.Thread):
 
     def run(self):
         logging.debug('Log Monitor Mulai')
+        hostname = socket.gethostname()
+        IPAddr = socket.gethostbyname(hostname)
         while self.killTimeout > 0:
             if (self.killTimeout - 1) <= 0:
                 logging.debug('Log Monitor Terakhir')
@@ -23,7 +26,7 @@ class SysMonThread(threading.Thread):
             curRAM = str(self.get_RAM_Used())
             curDate = time.strftime("%x %X")
             print(curDate+" "+curCPU+" "+curRAM)
-            conn = sqlite3.connect('sysmon.sqlite')
+            conn = sqlite3.connect('sysmon_'+IPAddr+'.sqlite')
             c = conn.cursor()
             c.execute("INSERT INTO sysmon VALUES('"+curDate+"','"+curCPU+"','"+curRAM+"')")
             if (self.killTimeout - 1) <= 0:

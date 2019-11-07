@@ -1,4 +1,5 @@
 import logging
+import socket
 import subprocess
 import time
 from SimpleXMLRPCServer import SimpleXMLRPCServer
@@ -59,13 +60,18 @@ class SystemStressXMLRPCAgent:
         p = subprocess.Popen("killall stress", shell=True, stdout=subprocess.PIPE)
         p.communicate()
 
-logging.basicConfig(filename='system_run.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
-server = SimpleXMLRPCServer(('10.0.0.11', 8000), logRequests=True, allow_none=True);
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
+logging.basicConfig(filename=IPAddr+'_run.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
+server = SimpleXMLRPCServer((IPAddr, 8001), logRequests=True, allow_none=True);
 server.register_multicall_functions()
 server.register_instance(SystemStressXMLRPCAgent())
-# server.serve_forever()
+
 try:
-    print 'Use Control-C to exit'
+    print('Use Control-C to exit')
+    print('Your Computer IP Address is:' + IPAddr)
+    logging.debug('Your Computer IP Address is:' + IPAddr)
     server.serve_forever()
 except KeyboardInterrupt:
-    print 'Exiting'
+    print('Exiting')
