@@ -14,7 +14,7 @@ class CallWorkerThread(threading.Thread):
 
     def run(self):
         print("Starting On "+self.stressWorker)
-        server = xmlrpclib.ServerProxy("http://"+self.stressWorker+":8000")
+        server = xmlrpclib.ServerProxy("http://"+self.stressWorker+":8001")
         multi = xmlrpclib.MultiCall(server)
         multi.do_run(self.cpuStress, self.memStress, self.killTimeout)
         multi.do_kill(self.killTimeout)
